@@ -1,0 +1,33 @@
+-- Global Numbers
+
+Select SUM(cast(new_cases as signed)) as total_cases,
+SUM(cast(new_deaths as signed)) as total_deaths,
+SUM(cast(new_deaths as signed))/SUM(New_Cases)*100 as DeathPercentage
+From PortfolioProject.Coviddeaths
+where continent is not null and upper(continent) in ('ASIA','AFRICA','OCEANIA','NORTH AMERICA','SOUTH AMERICA','EUROPE')
+order by 1,2;
+
+-- Total Deaths per Continent
+
+Select location, SUM(cast(new_deaths as signed)) as TotalDeathCount
+From PortfolioProject.Coviddeaths
+Where location in ('Europe', 'North America', 'South America', 'Asia', 'Africa', 'Oceania')
+Group by location
+order by TotalDeathCount desc;
+
+-- Percent Population infected per Country
+
+Select Location, Population, MAX(cast(total_cases as signed)) as HighestInfectionCount,  Max((total_cases/population))*100 as PercentPopulationInfected
+From PortfolioProject.CovidDeaths
+Group by Location, Population
+order by PercentPopulationInfected desc;
+
+-- Average Population infected per month
+
+Select Location, cast(Population as signed) as Population,
+str_to_date(date, '%m/%d/%Y') as date,
+MAX(cast(total_cases as signed)) as HighestInfectionCount,
+Max((cast(total_cases as signed)/Population))*100 as PercentPopulationInfected
+From PortfolioProject.CovidDeaths
+Group by Location, Population, date
+order by PercentPopulationInfected desc;
